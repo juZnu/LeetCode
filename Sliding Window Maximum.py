@@ -1,0 +1,3 @@
+def maxSlidingWindow(nums, k):
+    
+        
