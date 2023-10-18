@@ -1,6 +1,4 @@
 def minWindow(s,t):
-    
-    return 
-
+    pass
 
 print(minWindow("ADOBECODEBANC","ABC"))
