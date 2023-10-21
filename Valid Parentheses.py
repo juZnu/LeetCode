@@ -12,6 +12,4 @@ def isValid(s):
             stack.pop()
         else:
             return False
-    return not stack
-        
-print(isValid('({[({[{]})]})'))     
+    return not stack  
