@@ -16,7 +16,6 @@ class MyHashSet(object):
         return True if self.hashSet.get(key,0) else False
         
 
-
 # Your MyHashSet object will be instantiated and called as such:
 # obj = MyHashSet()
 # obj.add(key)
