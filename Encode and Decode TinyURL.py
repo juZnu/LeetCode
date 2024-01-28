@@ -1,12 +1,21 @@
-import hashlib
+class Codec:
+    def __init__(self):
+        self.encodeMap = {}
+        self.decodeMap = {}
+        self. tinyUrl = 'http://tinyurl.com/'
 
+    def encode(self, longUrl):
+        if longUrl not in self.encodeMap:
+            shortUrl = self.tinyUrl + str(len(self.encodeMap) + 1)
+            self.encodeMap[longUrl] = shortUrl
+            self.decodeMap[shortUrl] = longUrl
+        return self.encodeMap[longUrl]
+        
 
-def encode( longUrl):
-    pass
-    
-def decode( shortUrl):
-    pass
-print(decode(encode(longUrl= "https://leetcode.com/problems/design-tinyurl")))
+    def decode(self, shortUrl):
+        return self.decodeMap[shortUrl]
+        
 
-url = "https://leetcode.com/problems/design-tinyurl"
-print(hashlib.md5(url.encode()).hexdigest())
+# Your Codec object will be instantiated and called as such:
+# codec = Codec()
+# codec.decode(codec.encode(url))
