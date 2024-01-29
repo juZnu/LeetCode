@@ -1,15 +1,12 @@
 def strStr(haystack, needle):
-    length = len(needle)
     for i in range(len(haystack)):
-        if i+length > (len(haystack)-1):
-            break
-        elif haystack[i] == needle[0]:
-            boolean = True
-            for j in range(length):
-               if  haystack[i+j] != needle[j]:
-                   boolean = False
-                   break
-            if boolean:
-                return i
-    return -1
-print(strStr(haystack = "a", needle = "a"))
+        if haystack[i] == needle[0] and i+len(needle) < len(haystack)+1:
+            found = True
+            for j in range(len(needle)):
+                if needle[j] != haystack[i+j]:
+                    found = False
+                    break
+            if found:
+                 return i
+    return -1   
+print(strStr(haystack = "abc", needle = "c"))
