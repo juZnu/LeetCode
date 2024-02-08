@@ -16,5 +16,3 @@ def minEatingSpeed( piles, h):
             max_eating =middle
     return min_eating 
 print(minEatingSpeed(piles = [30,11,23,4,20], h = 6))
-
-# print(312884470//2,312884470%2)
