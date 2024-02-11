@@ -1,5 +1,4 @@
 class TimeMap(object):
-
     def __init__(self):
         self.hashMap = dict()
 
@@ -9,20 +8,21 @@ class TimeMap(object):
         self.hashMap[key].append([value,timestamp])
 
     def get(self, key, timestamp):
-        i = 0
         if not self.hashMap.get(key,0):
             return ''
-        j = len(self.hashMap[key])-1
-        while i<j+1:
+        array = self.hashMap[key]
+        i = 0
+        j = len(array)-1
+        result = ''
+        while i<=j:
             middle = (i+j)//2
-            if self.hashMap[key][j][-1] > timestamp and self.hashMap[key][middle][-1] > timestamp:
-                j = middle - 1
-            elif self.hashMap[key][i][-1] < timestamp:
-                i = middle + 1
+            if array[middle][-1] > timestamp:
+                j = middle-1
             else:
-                return self.hashMap[key][middle][0]
-        return self.hashMap[key][j][0] if self.hashMap[key][j][-1]<= timestamp else self.hashMap[key][i][0] if self.hashMap[key][i][-1]<= timestamp else ''
-
+                result = array[middle][0]
+                i = middle +1
+        return result
+        
         
 
 
