@@ -15,4 +15,3 @@ class Solution(object):
             node.right = invert(tmp)
             return node
         return invert(root)
-        
