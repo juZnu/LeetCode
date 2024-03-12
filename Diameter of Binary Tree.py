@@ -1,19 +1,18 @@
 # Definition for a binary tree node.
-# class TreeNode(object):
+# class TreeNode:
 #     def __init__(self, val=0, left=None, right=None):
 #         self.val = val
 #         self.left = left
 #         self.right = right
-class Solution(object):
-    def diameterOfBinaryTree(self, root):
+class Solution:
+    def diameterOfBinaryTree(self, root) -> int:
         result = 0
-        def depth(node):
-            if not node:
-                return 0
-            left = depth(node.left)
-            right = depth(node.right)
-            result = max(result, left+right)
-            return 1 + max(left,right)
+        def maxHeights(root):
+            nonlocal result
+            if not root: return 0
+            left = maxHeights(root.left)
+            right = maxHeights(root.right)
+            result = max(result, left + right)
+            return 1+max(left,right)
+        maxHeights(root)
         return result
-        
-        
