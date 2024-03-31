@@ -1,18 +1,20 @@
-from collections import deque
 from typing import List
 
 
-def countSubarrays( nums: List[int], k: int) -> int:
-    stack = []
-    value = max(nums)
-    result = 0
-    for i in range(len(nums)):
-        if value == nums[i]: stack.append(i)
-    prev = 0
-    for i in range(len(stack)-k+1):
-        result += (stack[i]+1 - prev) * ( len(nums) - stack[i+k-1])
-        prev = stack[i]+1
-    return result
-            
-    
-print(countSubarrays(nums = [1,3,2,3,3], k = 2))
+class Solution:
+    def countSubarrays(self, nums: List[int], k: int) -> int:
+        value = max(nums)
+        result = 0
+        count = 0
+        prev = 0
+        for i in range(len(nums)):
+            if value == nums[i]: count +=1
+            if count == k:
+                j = prev
+                while nums[j] != nums[i]:
+                    j += 1
+                result += (j+1- prev) * (len(nums) - i)
+                prev = j+1
+                count -=1
+        return result
+
