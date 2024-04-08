@@ -1,25 +1,21 @@
 from typing import List
 
-
-def exist( board: List[List[str]], word: str) -> bool:
-    def nextword(row,col,next_word):
-        if not next_word:
-            return True
+def exist(board: List[List[str]], word: str) -> bool:
+    def search(word,row,col,visited):
+        if not word: return True
+        neighbours = [(row+1,col),(row-1,col),(row,col-1),(row,col+1)]
         result = False
-        directions = [(row-1,col),(row+1,col),(row,col-1),(row,col+1)]
-        for row,col in directions:
-            if  0 <= row < len(board) and 0<= col < len(board[0]) and board[row][col] == next_word[0] and (row,col) not in visited:
-                visited.add((row,col))
-                result = result or nextword(row,col,next_word[1:])
-            
+        for i,j in neighbours:
+            if 0<= i< len(board) and 0<= j < len(board[0]) and (i,j) not in visited and board[i][j] == word[0]:
+                visited.add((i,j))
+                result = result or search(word[1:],i,j,visited)
+                visited.remove((i,j))
         return result
-
     for row in range(len(board)):
-        for col in range(len(board[0])):
-            visited = set()
-            visited.add((row,col))
-            if board[row][col] == word[0] and nextword(row,col,word[1:]):
-                return True
+        for col in range(len(board[row])):
+            if board[row][col] == word[0]:
+                if search(word[1:],row,col,{(row,col)}):return True
     return False
-
-print(exist(board = [["A","B","C","E"],["S","F","E","S"],["A","D","E","E"]], word = "ABCESEEEFS"))
+                 
+            
+print(exist(board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"))

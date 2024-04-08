@@ -1,10 +1,8 @@
-def lengthOfLastWord(s):
-        length = 0
-        i = len(s) - 1
-        while i >= 0 and s[i] == ' ':
-            i -= 1
-        while i >= 0 and s[i] != ' ':
-            length += 1
-            i -= 1
-        return length
-        
+def lengthOfLastWord(self, s: str) -> int:
+    r = len(s) -1
+    while r > -1 and s[r]== ' ':
+        r -= 1
+    l = r
+    while l > -1 and s[l] != " ":
+        l -= 1
+    return r-l

@@ -2,6 +2,7 @@ from typing import List
 
 def subsetsWithDup( nums: List[int]) -> List[List[int]]:
     result = []
+    nums.sort()
     def helper(carry,index):
         result.append(carry.copy())
         if len(nums) == index:
