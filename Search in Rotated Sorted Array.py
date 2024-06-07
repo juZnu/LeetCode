@@ -1,29 +1,37 @@
-def Binarysearch( nums, target):
-    i = 0
-    j = len(nums)-1
-    while i<=j:
-        middle = (i+j)//2
-        if nums[middle] >target:
-            j = middle -1
-        elif nums[middle] < target:
-            i = middle +1
+from typing import List
+
+
+
+def search( nums: List[int], target: int) -> int:
+    def BinarySearch(l,r,target):
+        while l < r:
+            mid = l+((r-l)//2)
+            
+            if nums[mid] < target:
+                l= mid + 1
+            elif nums[mid] > target:
+                r= mid - 1
+            else:
+                return mid
+        return l if nums[l] == target else -1
+    
+    l = 0
+    r = len(nums)-1
+    while l<r-1:
+        mid = l + ((r-l)//2)
+        if nums[mid] > nums[l]:
+            l = mid
         else:
-            return middle
-    return -1
-def search(nums, target):
-    i = 0
-    j = len(nums)-1
-    while i<j-1 and nums[i] > nums[j]:
-        middle =(i+j)//2
-        if nums[middle] > nums[i]:
-            i = middle
-        elif nums[middle] < nums[j]:
-            j = middle
-        else:
-            break
-    starting = i if nums[i] < nums[j] else j
-    i = 0 if target > nums[-1] else starting
-    j = len(nums)-1 if target <= nums[-1] else starting-1
-    result = Binarysearch(nums[i:j+1],target)
-    return -1 if result == -1 else i+ result
-print(search(nums = [3,5,1], target = 1))
+            r = mid
+            
+    l = l if nums[l] < nums[r] else r
+    
+    if nums[-1] >= target:
+        return  BinarySearch(l,len(nums)-1,target)
+    else:
+        return BinarySearch(0,l,target)
+        
+        
+
+
+print(search(nums = [1,3,5], target = 1))
