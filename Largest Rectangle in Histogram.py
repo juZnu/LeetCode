@@ -13,3 +13,5 @@ def largestRectangleArea(heights):
     for i, h in stack:
         maxArea = max(maxArea, h * (len(heights) - i))
     return maxArea
+
+print(largestRectangleArea(heights = [2,1,5,6,2,3]))

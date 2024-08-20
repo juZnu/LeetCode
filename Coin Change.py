@@ -3,12 +3,16 @@ from typing import List
 
 def coinChange( coins: List[int], amount: int) -> int:
     coins.sort()
-    result  = 0
-    while amount > 0 :
-        coin = coins.pop()
-        result += amount// coin
-        amount %= coin
-    return -1 if amount else result
+    dp = [float('inf') for _ in range(amount+1)]
+    dp[0] = 0
+    for coin in coins:
+        for change in range(coin,len(dp)):
+            dp[change] = min(1+dp[change-coin], dp[change])
 
-print(coinChange(coins = [186,419,83,408], amount = 6249))
+    return dp[-1] if dp[-1] != float('inf') else -1
+
+    
+   
+
+print(coinChange(coins = [1,2,5], amount = 11))
     
