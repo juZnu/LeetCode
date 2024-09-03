@@ -1,44 +1,47 @@
+import collections
 from typing import List
 
+class Solution:
+    def snakesAndLadders(self, board: List[List[int]]) -> int:
+        board.reverse()  # Reverse the board to simplify calculations
+        n = len(board)
+        end = n * n - 1  # Target cell (0-based)
+        visited = set()
 
-def snakesAndLadders( board: List[List[int]]) -> int:
-    n = len(board)
-    memo = {}
-    visited = set()
-    for i in range(n//2):
-        if i%2:
-            board[i],board[-i-1] = board[-i-1][::-1],board[i][::-1]
-        else:
-            board[i],board[-i-1] = board[-i-1],board[i]
+        queue = collections.deque()
+        queue.append([0, 0, 0])  # Start at cell 0 with 0 moves
 
-    def climb(i,j):
-        
-        if (i,j) in memo:
-            return memo[(i,j)]
-        
-        if (i,j) in visited:
-            return float('inf')
+        def numToCell(num):
+            r = num // n
+            c = num % n if r % 2 == 0 else n - 1 - (num % n)
+            return r, c
 
-        if i ==n-1  and j == n-1:return 0
-        
-        visited.add((i,j))
-        a,b = float('inf'),float('inf')
-        if board[i][j] != -1:
-            new_i = board[i][j]//n
-            new_j = board[i][j]%n - 1
-            a = 1+climb(new_i,new_j)
+        def cellToNum(r, c):
+            num = r * n
+            num += c if r % 2 == 0 else n - 1 - c
+            return num
 
-        new_i,new_j = i,j+1
+        while queue:
+            r, c, dist = queue.popleft()
+            num = cellToNum(r, c)
 
-        if new_j == n:
-            new_i += 1
-            new_j = 0
+            if num == end:  # If we reach the end cell, return the distance
+                return dist
 
-        b = 1+climb(new_i,new_j)
-        memo[(i,j)] = min(a,b)
+            for dice in range(1, 7):  # Try all possible dice rolls
+                next_num = num + dice
+                if next_num >= n * n:
+                    continue
 
-        return memo[(i,j)]
-            
-    return climb(0,0)
-    
-print(snakesAndLadders(board = [[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,35,-1,-1,13,-1],[-1,-1,-1,-1,-1,-1],[-1,15,-1,-1,-1,-1]]))
+                new_r, new_c = numToCell(next_num)
+
+                # If there's a snake or ladder, move to the destination cell
+                if board[new_r][new_c] != -1:
+                    next_num = board[new_r][new_c] - 1  # Convert to 0-based index
+                    new_r, new_c = numToCell(next_num)
+
+                if next_num not in visited:  # Only process unvisited cells
+                    visited.add(next_num)
+                    queue.append([new_r, new_c, dist + 1])
+
+        return -1  # If there's no way to reach the end, return -1
