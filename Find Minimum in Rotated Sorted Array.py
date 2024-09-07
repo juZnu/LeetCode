@@ -1,12 +1,12 @@
 def findMin( nums):
-    i = 0
-    j = len(nums)-1
-    if nums[i] < nums[j]:
-        return nums[i]
-    while i+1 < j:
-        middle = (i+j)//2
-        if nums[middle] > nums[i]:
-            i = middle
-        elif nums[middle] < nums[j]:
-            j = middle
-    return nums[j]
+    l = 0
+    r = len(nums)-1
+    while l < r:
+        mid = l + (r-l) // 2
+        if nums[mid] < nums[l]:
+            r = mid
+        else:
+            l = mid+1
+    return nums[l]
+
+print(findMin([4,5,6,7,0,1,2]))

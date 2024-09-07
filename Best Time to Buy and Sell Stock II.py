@@ -5,6 +5,6 @@ def maxProfit( prices):
         if prices[i] < prices[i-1]:
             profit += prices[i-1] - min_local
             min_local = prices[i]
-            
     return profit + prices[-1] - min_local
-print(maxProfit(prices = [1,2,3,4,5]))
+
+print(maxProfit(prices = [7,1,5,3,6,4]))

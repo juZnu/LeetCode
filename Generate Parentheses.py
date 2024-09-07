@@ -1,15 +1,13 @@
-def generateParenthesis(n):
-    result = []
-    def recParenthesis(string,close,open):
-        if close == n and open == n:
-            result.append(string)
-        elif close == open:
-            recParenthesis(string+'(',close,open+1)
-        elif close < open :
-            if open != n:
-                recParenthesis(string+'(',close,open+1)
-                recParenthesis(string+')',close+1,open)
-            else:
-                recParenthesis(string+')',close+1,open)
-    recParenthesis('',0,0)
-    return result
+class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+        res = []
+
+        def BackTracking(openB,closeB,strP):
+            if not openB and not closeB:
+                res.append(strP)
+                return
+            if openB: BackTracking(openB - 1, closeB,strP+'(')
+            if closeB > openB: BackTracking(openB, closeB - 1,strP+')')
+
+        BackTracking(n,n,'')
+        return res

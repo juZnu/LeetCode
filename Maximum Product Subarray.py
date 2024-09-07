@@ -1,9 +1,16 @@
-def maxProduct( nums) -> int:
-    dp =[1 for _ in range(len(nums)+1)]
+from typing import List
 
-    for j in range(len(nums)):
-        for i in range(j+1):
-            dp[i] = max(nums[i]*dp[i-1],dp[i])
 
-    return dp[-1]
-print(maxProduct(nums = [2,3,-2,4]))
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        maxProd = minProd = res = nums[0]
+
+        for val in nums[1:]:
+            if val < 0:
+                maxProd,minProd = minProd,maxProd
+            
+            maxProd = max(val,maxProd*val)
+            minProd = min(val,minProd*val)
+            res = max(res,maxProd)
+
+        return res

@@ -1,21 +1,33 @@
-from typing import List
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        directions = [(0,-1),(-1,0),(0,1),(1,0)]
+        length = len(word)
+        m , n = len(board) , len(board[0])
 
-def exist(board: List[List[str]], word: str) -> bool:
-    def search(word,row,col,visited):
-        if not word: return True
-        neighbours = [(row+1,col),(row-1,col),(row,col-1),(row,col+1)]
-        result = False
-        for i,j in neighbours:
-            if 0<= i< len(board) and 0<= j < len(board[0]) and (i,j) not in visited and board[i][j] == word[0]:
-                visited.add((i,j))
-                result = result or search(word[1:],i,j,visited)
-                visited.remove((i,j))
-        return result
-    for row in range(len(board)):
-        for col in range(len(board[row])):
-            if board[row][col] == word[0]:
-                if search(word[1:],row,col,{(row,col)}):return True
-    return False
-                 
+        def dfs(i,j,index):
+            if board[i][j] != word[index]: 
+                return False
+            if index +1 == length:
+                return True
+
+            temp = board[i][j]
+            board[i][j] = "#"
+            res = False
+            for di, dj in directions:
+                new_i, new_j = i + di, j + dj
+                if 0 <= new_i < m and 0 <= new_j < n and board[new_i][new_j] != "#":
+                    res |= dfs(new_i, new_j, index + 1)
+
+            board[i][j] = temp
+            return res
+
+        for i in range(m):
+            for j in range(n):
+                if board[i][j] == word[0]:
+                    if dfs(i,j,0):return True
+
+        return False
+
+
             
-print(exist(board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"))
+            

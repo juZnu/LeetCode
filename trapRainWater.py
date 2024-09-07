@@ -1,13 +1,19 @@
 def trap( height):
+    if len(height) < 2 :return 0
+
     i = 0
-    j =1
+    j = 0
     contain = 0
-    while j != len(height):
-        if height[i] <= height[j]:
-            k = i
-            while k < j:
-                contain += height[i] - height[k] 
-                k += 1
-            i = j
+
+    while j < len(height):
+        if height[j] >= height[i]:
+            subConatain = (j-i) * height[i]
+            while i < j:
+                subConatain -= height[i]
+                i+= 1
+            contain += subConatain
         j += 1
-    return contain + (trap(height[i:j][::-1]) if i!= j-1 else 0)
+
+    return contain+trap(height[i:j][::-1])
+
+print(trap([4,2,3]))
