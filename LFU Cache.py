@@ -1,141 +1,94 @@
-class ListNode:
-    def __init__(self, key, val=None, prev=None, next=None):
+class Node:
+    def __init__(self,key=None,val=None,prev=None,next=None):
         self.key = key
-        self.val = val if val is not None else key  # Handle 0 or None values properly
+        self.val = val
         self.count = 0
-        self.next = next
         self.prev = prev
+        self.next = next
 
 class DoubleLinkedList:
     def __init__(self):
-        self.head = None
-        self.tail = None
+        self.head = Node()
+        self.tail = Node()
+        self.tail.prev,self.head.next = self.head,self.tail
+    
+    def addNode(self,node):
+        prev_,next_ = self.tail.prev,self.tail
+        node.next,node.prev = next_,prev_
+        prev_.next,next_.prev = node,node
+    
+    def delNode(self,node):
+        prev_,next_ = node.prev,node.next
+        prev_.next,next_.prev = next_,prev_
+        node.prev,node.next = None,None
+        
+    
+    def delHead(self):
+        node = self.head.next
+        self.delNode(node)
+        return node
 
-    def addNode(self, node):
-        if not self.head:
-            self.head = node
-        else:
-            self.tail.next = node
-            node.prev = self.tail
-        self.tail = node
-
-    def addHead(self, node):
-        if not self.head:
-            self.addNode(node)
-            return  # Stop further execution as the node is already added
-        node.next = self.head
-        self.head.prev = node
-        self.head = node
-
-    def addAfterNode(self, node, prevNode=None):
-        if not prevNode:
-            self.addHead(node)
-        else:
-            nextNode = prevNode.next
-            node.prev = prevNode
-            node.next = nextNode
-            prevNode.next = node
-            if nextNode:
-                nextNode.prev = node
-
-    def remove_head(self):
-        if not self.head:
-            return
-        tmp = self.head
-        self.head = tmp.next
-        if self.head:
-            self.head.prev = None
-        else:
-            self.tail = None  # List becomes empty
-        tmp.next = None
-
-    def remove_tail(self):
-        if not self.tail:
-            return
-        tmp = self.tail
-        self.tail = tmp.prev
-        if self.tail:
-            self.tail.next = None
-        else:
-            self.head = None  # List becomes empty
-        tmp.prev = None
-
-    def removeNode(self, node):
-        if node == self.head:
-            self.remove_head()
-        elif node == self.tail:
-            self.remove_tail()
-        else:
-            nextNode, prevNode = node.next, node.prev
-            if prevNode:
-                prevNode.next = nextNode
-            if nextNode:
-                nextNode.prev = prevNode
-            node.next, node.prev = None, None
+    def isEmpty(self):
+        return self.head.next == self.tail
 
 class LFUCache:
 
     def __init__(self, capacity: int):
-        self.hashmap = {}  # Map from key to node
-        self.count = {}  # Map from count to (count node, DoubleLinkedList)
-        self.countList = DoubleLinkedList()  # Ordered list of counts
         self.capacity = capacity
-
-    def addCountNode(self, count, countPrev):
-        if count and count not in self.count:
-            self.count[count] = (ListNode(count), DoubleLinkedList())
-            if countPrev:
-                self.countList.addAfterNode(self.count[count][0], self.count[countPrev][0])
-            else:
-                self.countList.addAfterNode(self.count[count][0])
-
-    def removeCountNode(self, count):
-        if count in self.count:
-            countNode, dll = self.count[count]
-            if not dll.head:  # Only remove the count node if the list is empty
-                self.countList.removeNode(countNode)
-                del self.count[count]
-    
-    def delete(self):
-        leastCount = self.countList.head
-        if not leastCount:  # Edge case if the list is empty
-            return
-        key = self.count[leastCount.key][1].head.key
-        self.count[leastCount.key][1].remove_head()
-        del self.hashmap[key]
-        self.removeCountNode(leastCount.key)
-            
-    def addCount(self, node):
-        prev_count = node.count
+        self.minFreq = 0
+        self.hashmap = {}
+        self.countMap = {}
+       
+    def incCount(self,node):
+        prevCount = node.count
         node.count += 1
-        pres_count = node.count
+        curCount = node.count
 
-        if pres_count not in self.count:
-            self.addCountNode(pres_count, prev_count)
-        
-        if prev_count: 
-            self.count[prev_count][1].removeNode(node)
-            self.removeCountNode(prev_count)
+        if curCount not in self.countMap:
+            self.countMap[curCount] = DoubleLinkedList()
+        curCountDLL = self.countMap[curCount]
 
-        self.count[pres_count][1].addNode(node)
+        if prevCount == 0:
+            self.minFreq = 1
+        else:
+            prevCountDLL = self.countMap[prevCount]
+            prevCountDLL.delNode(node)
+            if prevCountDLL.isEmpty():
+                del self.countMap[prevCount]
+                if prevCount== self.minFreq:
+                    self.minFreq = curCount
+
+        curCountDLL.addNode(node)
+
+
+    def removeLeastUsed(self):
+        leastUsedDLL = self.countMap[self.minFreq]
+        node =leastUsedDLL.delHead()
+        del self.hashmap[node.key]
+        if leastUsedDLL.isEmpty():
+            del self.countMap[self.minFreq]
+            self.minFreq = 0
 
     def get(self, key: int) -> int:
         if key in self.hashmap:
-            self.addCount(self.hashmap[key])
-            return self.hashmap[key].val
+            node = self.hashmap[key]
+            self.incCount(node)
+            return node.val
         return -1
 
     def put(self, key: int, value: int) -> None:
         if self.capacity == 0:
-            return
+            return  
+        node = None
 
-        if key not in self.hashmap:
-            if len(self.hashmap) == self.capacity:
-                self.delete()
-            self.hashmap[key] = ListNode(key, value)
-        else:
+        if key in self.hashmap:
             node = self.hashmap[key]
             node.val = value
-        
-        node = self.hashmap[key]
-        self.addCount(node)
+        elif len(self.hashmap) == self.capacity:
+            self.removeLeastUsed()
+
+        if key not in  self.hashmap:
+            node = Node(key,value)
+            self.hashmap[key] = node
+
+        self.incCount(node)

@@ -1,55 +1,57 @@
-# Define the LRUCache class and Node class
 class Node:
-    def __init__(self, key=0, value=0, prev=None, next_=None):
+    def __init__(self,key= None,value= None,prev=None,next=None):
         self.key = key
-        self.value = value
+        self.val = value
         self.prev = prev
-        self.next = next_
+        self.next = next
 
 class LRUCache:
-    def __init__(self, capacity):
+
+    def __init__(self, capacity: int):
         self.capacity = capacity
-        self.hashMap = {}
-        self.head, self.tail = Node(), Node()
-        self.head.next = self.tail
-        self.tail.prev = self.head 
-        
-    def insert(self,key,value):
-        node= Node(key,value)
-        self.tail.prev.next = node
-        node.prev = self.tail.prev
-        self.tail.prev = node
-        node.next = self.tail
-        self.hashMap[key] = node
-        
-    def remove(self,key):
-        node = self.hashMap[key]
-        node.prev.next = node.next
-        node.next.prev = node.prev
-        del self.hashMap[key]
-        
-    def get(self, key):
-        if key in self.hashMap:
-            value = self.hashMap[key].value
-            self.remove(key)
-            self.insert(key,value)
-            return value
+        self.hashmap = {}
+        self.head = Node()
+        self.tail = Node()
+        self.head.next,self.tail.prev = self.tail,self.head
+
+
+    def get(self, key: int) -> int:
+        if key in self.hashmap:
+            return self.hashmap[key].val
         return -1
 
-    def put(self, key, value):
-        if key in self.hashMap:
-            self.remove(key)
-        elif len(self.hashMap) == self.capacity:
-            self.remove(self.head.next.key)
-        self.insert(key,value)
+    def remove(self,node):
+        if not node.val : return
+        prev_,next_ = node.prev,node.next
+        prev_.next,next_.prev = next_,prev_
+        node.next,node.prev = None,None
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.hashmap:
+            node = self.hashmap[key]
+            self.remove(node)
+        elif len(self.hashmap) == self.capacity:
+            node = self.head.next
+            self.remove(node)
+            del self.hashmap[node.key]
+
+        if key not in self.hashmap:
+            self.hashmap[key] = Node(key,value)
+
+        node = self.hashmap[key]
+        node.val = value
+        prev_,next_ = self.tail.prev,self.tail
+        node.prev,node.next = prev_,next_
+        prev_.next,next_.prev = node,node
+
         
         
         
         
 
 # Perform operations based on the test case
-operations = ["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
-arguments = [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+operations = ["LRUCache","put","put","get","put","get","put","get","get","get"]
+arguments = [[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]]
 
 # Initialize the LRUCache object
 obj = None
